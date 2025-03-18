@@ -1,0 +1,9 @@
+<p><a href="@To">@ChildContent</a></p>
+
+@code {
+    [Parameter]
+    public string To { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

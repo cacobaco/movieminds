@@ -1,0 +1,133 @@
+@using Movieminds.Client.Authentication;
+@using Movieminds.Client.Services;
+@using Movieminds.Presentation.Requests.Authentication;
+@using Movieminds.Presentation.Enums;
+
+@inject JwtAuthenticationStateProvider AuthenticationStateProvider;
+@inject AuthenticationService AuthenticationService;
+@inject NavigationManager Navigation;
+@inject IJSRuntime JSRuntime;
+
+<EditForm Model="RegisterRequest" OnValidSubmit="Submit" FormName="Register">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="inputName" class="form-label">Nome</label>
+        <InputText id="inputName" class="form-control" placeholder="Nome" @bind-Value="RegisterRequest.Name" />
+
+        <ValidationMessage For="@(() => RegisterRequest.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="inputUsername" class="form-label">Nome de utilizador</label>
+        <InputText id="inputUsername" class="form-control" placeholder="Nome de utilizador"
+            @bind-Value="RegisterRequest.Username" />
+
+        <ValidationMessage For="@(() => RegisterRequest.Username)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="inputDOB" class="form-label">Data de nascimento</label>
+        <InputDate id="inputDOB" class="form-control" @bind-Value="RegisterRequest.BirthDate" />
+
+        <ValidationMessage For="@(() => RegisterRequest.BirthDate)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="inputSex" class="form-label">Sexo</label>
+        <InputSelect id="inputSex" class="form-select" @bind-Value="RegisterRequest.Gender">
+            <option selected>Selecione o seu sexo</option>
+            <option value="@Gender.Male">Masculino</option>
+            <option value="@Gender.Female">Feminino</option>
+            <option value="@Gender.Other">Outro</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => RegisterRequest.Gender)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="inputEmail" class="form-label">Endereço de email</label>
+        <InputText type="email" id="inputEmail" class="form-control" placeholder="Email"
+            @bind-Value="RegisterRequest.Email" />
+
+        <ValidationMessage For="@(() => RegisterRequest.Email)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="inputPassword" class="form-label">Palavra-passe</label>
+        <InputText type="password" id="inputPassword" class="form-control" placeholder="Palavra-passe"
+            @bind-Value="RegisterRequest.Password" />
+
+        <ValidationMessage For="@(() => RegisterRequest.Password)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirmar Palavra-passe</label>
+        <InputText type="password" id="confirmPassword" class="form-control" placeholder="Confirmar Palavra-passe"
+            @bind-Value="RegisterRequest.ConfirmPassword" />
+
+        <ValidationMessage For="@(() => RegisterRequest.ConfirmPassword)" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="rememberMe">
+        <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary px-3" style="margin-left: 200px">Criar</button>
+</EditForm>
+
+
+@code {
+    private RegisterRequest RegisterRequest = new RegisterRequest
+        {
+            Name = string.Empty,
+            Username = string.Empty,
+            Gender = null,
+            BirthDate = null,
+            Email = string.Empty,
+            Password = string.Empty,
+            ConfirmPassword = string.Empty
+        };
+
+
+    private string ErrorMessage = string.Empty;
+
+    private async void Submit()
+    {
+        var response = await AuthenticationService.RegisterAsync(RegisterRequest);
+        if (!response.Success)
+        {
+            ErrorMessage = response.Message;
+            StateHasChanged();
+            return;
+        }
+
+        var token = response.Data?.Token;
+        if (string.IsNullOrEmpty(token))
+        {
+            ErrorMessage = "Ocorreu um erro ao tentar obter o token de autenticação.";
+            StateHasChanged();
+            return;
+        }
+
+        var userId = response.Data?.UserId;
+        if (userId is null)
+        {
+            ErrorMessage = "Ocorreu um erro ao tentar obter o ID do utilizador.";
+            StateHasChanged();
+            return;
+        }
+
+        await JSRuntime.InvokeVoidAsync("blazorInterop.hideModal", "#registerModal");
+
+        await AuthenticationStateProvider.MarkUserAsAuthenticatedAsync(token, (int)userId);
+    }
+}

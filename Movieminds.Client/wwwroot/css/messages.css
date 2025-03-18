@@ -1,0 +1,4 @@
+.message-tab:hover {
+    background-color: darkslategrey;
+    transition: background-color 0.2s linear;
+}

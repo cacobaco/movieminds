@@ -1,0 +1,33 @@
+@using Movieminds.Client.Authentication;
+
+@inject JwtAuthenticationStateProvider AuthenticationStateProvider;
+@inject NavigationManager Navigation;
+@inject IJSRuntime JSRuntime;
+
+<div id="logoutModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" style="padding-left:200px">Sair</h5>
+                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                Esta ação irá terminar sessão. Tem a certeza?
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" @onclick="HandleLogout">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private async void HandleLogout()
+    {
+        await JSRuntime.InvokeVoidAsync("blazorInterop.hideModal", "#logoutModal");
+
+        await AuthenticationStateProvider.MarkUserAsLoggedOutAsync();
+    }
+}

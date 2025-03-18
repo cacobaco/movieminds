@@ -1,0 +1,10 @@
+<div class="loading-overlay" style="@loadingStyle">
+    <div class="loading-spinner"></div>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsLoading { get; set; } = true;
+
+    private string loadingStyle => IsLoading ? "display: block;" : "display: none;";
+}

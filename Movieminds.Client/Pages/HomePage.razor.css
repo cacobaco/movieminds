@@ -1,0 +1,19 @@
+﻿body {
+    color: white;
+}
+
+.trending-bar {
+    max-width: 300px;
+}
+
+.main {
+    min-width: 70vw;
+}
+
+.posts {
+    min-width: 300px;
+}
+
+.search-bar {
+    min-width: 20vw;
+}

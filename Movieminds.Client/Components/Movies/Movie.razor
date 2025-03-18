@@ -1,0 +1,132 @@
+@using Movieminds.Client.Components.Authentication;
+@using Movieminds.Client.Components.Posts;
+@using Movieminds.Client.Components.Trends;
+@using Movieminds.Client.Services;
+@using Movieminds.Presentation.Responses.Movies;
+
+@inject MovieService MovieService;
+
+@if (MovieResponse is not null)
+{
+    <div class="d-flex align-items-center justify-content-between" style="width:85vw; height: 87vh;">
+        <div class="d-flex flex-column align-items-start" style="width: 40vw;">
+            <h2>@MovieResponse.Title</h2>
+            <p>@MovieResponse.ReleaseDate.ToString()</p>
+            <div class="d-flex justify-content-center">
+                <img type="image/jpg" class="rounded-3" style="max-width:200px" src="@MovieResponse.PosterImageUrl"
+                    alt="MovieImage" />
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="d-flex flex-column ms-3 justify-content-center align-items-center">
+                            <button class="btn btn-primary d-flex justify-content-center align-items-center">
+                                <svg viewBox="0 0 24 24" fill="none" style="width: 20px" xmlns="http://www.w3.org/2000/svg">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path d="M4 12H20M12 4V20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round"></path>
+                                    </g>
+                                </svg>
+                                Lista de desejos
+                            </button>
+                            <button class="btn btn-primary d-flex justify-content-center align-items-center mt-3">
+                                <svg viewBox="0 0 24 24" fill="none" style="width: 20px" xmlns="http://www.w3.org/2000/svg">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path d="M4 12H20M12 4V20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round"></path>
+                                    </g>
+                                </svg>
+                                Visualizados
+                            </button>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <h6>Rating: @MovieResponse.Rating/10</h6>
+            </div>
+            <p>@MovieResponse.Description</p>
+            <div class="d-flex pt-3 flex-column">
+                <div class="d-flex border-top align-items-center py-2" style="width: 30vw;">
+                    Diretores: <small>Funcionalidade disponível brevemente...</small>
+                </div>
+                <div class="d-flex border-top border-bottom align-items-center py-2" style="width: 30vw;">
+                    Atores: <small>Funcionalidade disponível brevemente...</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column align-items-center" style="width: 40vw;">
+            <h2 class="text-center">Posts</h2>
+
+            <div class="d-flex flex-column align-items-center overflow-y-scroll" style="width: 40vw; height: 70vh;">
+                <Posts MovieId="@MovieResponse.Id" />
+            </div>
+        </div>
+
+
+        <div class="d-flex flex-column align-items-center">
+            <h2>Em alta 🔥</h2>
+            <div class="flex-column trending-bar overflow-scroll"
+                style="border-left: 0.5px solid white !important; height: 93vh; padding-left: 20px;">
+                <TrendingMovies />
+            </div>
+        </div>
+    </div>
+}
+else if (ErrorMessage is not null)
+{
+    <h2>@ErrorMessage</h2>
+}
+else
+{
+    <Loading />
+}
+
+@code {
+    private int _id;
+
+    [Parameter]
+    public int Id
+    {
+        get => _id;
+        set
+        {
+            _id = value;
+            LoadMovie();
+        }
+    }
+
+    private MovieResponse MovieResponse { get; set; }
+
+    private string _errorMessage;
+    private string ErrorMessage
+    {
+        get => _errorMessage;
+        set
+        {
+            _errorMessage = value;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMovie();
+    }
+
+    private async Task LoadMovie()
+    {
+        var response = await MovieService.GetMovieAsync(Id);
+        if (!response.Success || response.Data == null)
+        {
+            ErrorMessage = response.Message;
+            return;
+        }
+
+        MovieResponse = response.Data;
+        StateHasChanged();
+    }
+}

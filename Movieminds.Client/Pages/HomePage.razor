@@ -1,0 +1,49 @@
+@using Movieminds.Client.Components;
+@using Movieminds.Client.Components.Authentication;
+@using Movieminds.Client.Components.Posts;
+@using Movieminds.Client.Components.Trends;
+@using Movieminds.Client.Services;
+
+@page "/"
+
+<PageTitle>Página inicial</PageTitle>
+
+<body class="d-flex justify-content-between">
+    <div class="main d-flex flex-column align-items-center">
+        <div class="d-flex align-items-center">
+            <Searchbar />
+            <AuthorizeView>
+                <NotAuthorized>
+                    <NavLink class="mx-3 mb-3" data-toggle="modal" data-target="#registerModal">Registe-se</NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+        <div class="d-flex posts flex-column overflow-scroll align-items-center"
+            style="padding-top: 50px; height: 80vh;">
+            <Posts @key="PostsRefresh" />
+        </div>
+        <AuthorizeView>
+            <Authorized>
+                <button class="d-flex justify-content-center align-items-center rounded-pill btn btn-primary px-3 py-2"
+                    data-toggle="modal" data-target="#postModal" style="min-width:180px; margin-top:30px">Post</button>
+                <PostModal OnValidSubmit="OnValidSubmit" />
+            </Authorized>
+        </AuthorizeView>
+    </div>
+    <div class="d-flex flex-column align-items-center">
+        <h2>Em alta 🔥</h2>
+        <div class="flex-column trending-bar overflow-scroll"
+            style="border-left: 0.5px solid white !important; height: 93vh; padding-left: 20px;">
+            <TrendingMovies />
+        </div>
+    </div>
+</body>
+
+@code {
+    private int PostsRefresh = 0;
+
+    private void OnValidSubmit()
+    {
+        PostsRefresh++;
+    }
+}

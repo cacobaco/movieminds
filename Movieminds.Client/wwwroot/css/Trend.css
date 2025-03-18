@@ -1,0 +1,11 @@
+﻿.movie{
+    max-width: 200px;
+}
+
+.movie-card {
+    transition: transform .2s;
+}
+
+.movie-card:hover {
+    transform: scale(1.1);
+}

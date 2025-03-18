@@ -1,0 +1,112 @@
+@using Movieminds.Client.Services
+@using Movieminds.Presentation.Requests.Posts;
+@using Movieminds.Presentation.Responses.Movies;
+@inject PostService PostService;
+@inject MovieService MovieService;
+@inject IJSRuntime JSRuntime;
+
+<EditForm Model="PostRequest" OnValidSubmit="Submit" FormName="Post">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="postContent" class="form-label"></label>
+        <InputTextArea class="form-control" id="postContent" rows="3" placeholder="O que está acontecendo?"
+            @bind-Value="PostRequest.Content" />
+
+        <ValidationMessage For="@(() => PostRequest.Content)" />
+    </div>
+    <div class="mb-3">
+        <label for="postMovie" class="form-label">Filme</label>
+        <InputSelect class="form-select overflow-y-scroll" id="postMovie" aria-placeholder="Escolha um filme..."
+            @bind-Value="PostRequest.MovieId">
+            <option selected>Escolha um filme...</option>
+            @if (MovieResponses is not null)
+            {
+                @foreach (var MovieResponse in MovieResponses)
+                {
+                    <option value=@MovieResponse.Id>@MovieResponse.Title</option>
+                }
+            }
+        </InputSelect>
+
+        <ValidationMessage For="@(() => PostRequest.MovieId)" />
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+
+    <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Publicar</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; } = EventCallback.Empty;
+
+    private MovieResponse MovieResponse { get; set; }
+    private int CurrentPage = 1;
+    private IEnumerable<MovieResponse>? MovieResponses;
+
+    private string? _errorMessage;
+    private string? ErrorMessage
+    {
+        get => _errorMessage;
+        set
+        {
+            _errorMessage = value;
+            StateHasChanged();
+        }
+    }
+
+    private PostRequest PostRequest = new PostRequest
+        {
+            MovieId = null,
+            Content = string.Empty
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMoreMovies();
+    }
+
+    private async Task LoadMoreMovies()
+    {
+        var response = await MovieService.GetMoviesAsync(CurrentPage++);
+        if (!response.Success || response.Data is null)
+        {
+            ErrorMessage = response.Message;
+            return;
+        }
+
+        if (MovieResponses is null)
+        {
+            MovieResponses = [];
+        }
+
+        MovieResponses = MovieResponses.Union(response.Data);
+        StateHasChanged();
+    }
+
+    private async Task Submit()
+    {
+        var response = await PostService.PostPostAsync(PostRequest);
+        if (!response.Success)
+        {
+            ErrorMessage = response.Message;
+            StateHasChanged();
+            return;
+        }
+
+        await JSRuntime.InvokeVoidAsync("blazorInterop.hideModal", "#postModal");
+        PostRequest.Content = string.Empty;
+        PostRequest.MovieId = null;
+        ErrorMessage = null;
+        StateHasChanged();
+        OnValidSubmit.InvokeAsync();
+    }
+}

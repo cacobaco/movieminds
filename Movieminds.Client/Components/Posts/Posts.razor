@@ -1,0 +1,76 @@
+﻿@using Movieminds.Presentation.Responses.Posts;
+@using Movieminds.Client.Services;
+
+@inject PostService PostService
+
+@if (PostResponses is not null)
+{
+    @if (PostResponses.Count() < 1)
+    {
+        <h3 class="text-center">Nenhum post encontrado</h3>
+    }
+    else
+    {
+        @foreach (var PostResponse in PostResponses)
+        {
+            <Post PostResponse="@PostResponse" />
+        }
+    }
+}
+else if (ErrorMessage is not null)
+{
+    <h3 class="text-center">@ErrorMessage</h3>
+}
+else
+{
+    <Loading />
+}
+
+@code {
+    [Parameter]
+    public int? ProfileId { get; set; } = null;
+
+    private int? _movieId = null;
+    [Parameter]
+    public int? MovieId
+    {
+        get => _movieId;
+        set
+        {
+            _movieId = value;
+            LoadPosts();
+        }
+    }
+
+
+    private IEnumerable<PostResponse>? PostResponses;
+
+    private string? _errorMessage;
+    private string? ErrorMessage
+    {
+        get => _errorMessage;
+        set
+        {
+            _errorMessage = value;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        var response = await PostService.GetPostsAsync(ProfileId, MovieId);
+        if (!response.Success || response.Data is null)
+        {
+            ErrorMessage = response.Message;
+            return;
+        }
+
+        PostResponses = response.Data;
+        StateHasChanged();
+    }
+}

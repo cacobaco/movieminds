@@ -1,0 +1,17 @@
+@using Movieminds.Presentation.Responses.Movies;
+
+<div class="flex-column px-3 pb-3 movie-card">
+    <a href="/movie/@MovieResponse.Id" class="text-white" style="text-decoration: none;">
+        <div class="d-flex flex-column text-center justify-content-center align-items-center">
+            <img type="image/jpg" class="rounded-3" style="max-width:200px" src="@(MovieResponse.PosterImageUrl)"
+                alt="MovieImage" />
+            <h6 class="px-2">@MovieResponse.Title</h6><br>
+            <h6>Rating: @MovieResponse.Rating/10</h6>
+        </div>
+    </a>
+</div>
+
+@code {
+    [Parameter]
+    public MovieResponse MovieResponse { get; set; }
+}

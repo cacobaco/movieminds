@@ -1,0 +1,18 @@
+@inherits LayoutComponentBase
+
+@using Movieminds.Client.Components.Authentication;
+
+<CascadingAuthenticationState>
+    <div class="page bg-dark">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+        <main>
+            <article class="content px-4">
+                @Body
+                <LoginModal />
+                <RegisterModal />
+            </article>
+        </main>
+    </div>
+</CascadingAuthenticationState>

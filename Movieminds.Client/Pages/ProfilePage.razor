@@ -1,0 +1,36 @@
+@page "/profile/{Id:int?}"
+
+@using Movieminds.Client.Components.Profiles;
+@using Movieminds.Client.Components.Posts;
+@using Movieminds.Client.Components.Trends;
+@using Movieminds.Presentation.Responses.Authentication;
+@using Movieminds.Presentation.Responses.Profile;
+@using Movieminds.Client.Providers;
+@using Movieminds.Client.Services;
+
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Perfil</PageTitle>
+
+@if (Id is null)
+{
+    <AuthorizeView>
+        <Authorized>
+            <Profile />
+        </Authorized>
+        <NotAuthorized>
+            @{
+                NavigationManager.NavigateTo("/");
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+}
+else
+{
+    <Profile Id="@Id" />
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+}

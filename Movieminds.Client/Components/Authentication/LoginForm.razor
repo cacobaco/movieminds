@@ -1,0 +1,81 @@
+@using Movieminds.Client.Authentication;
+@using Movieminds.Client.Services;
+@using Movieminds.Presentation.Requests.Authentication;
+
+@inject JwtAuthenticationStateProvider AuthenticationStateProvider;
+@inject AuthenticationService AuthenticationService;
+@inject NavigationManager Navigation;
+@inject IJSRuntime JSRuntime;
+
+<EditForm Model="LoginRequest" OnValidSubmit="Submit" FormName="Login">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="inputIdentifier" class="form-label">Identificador (nome de utilizador ou email)</label>
+        <InputText id="inputIdentifier" class="form-control" @bind-Value="LoginRequest.Identifier" />
+
+        <ValidationMessage For="@(() => LoginRequest.Identifier)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="inputPassword" class="form-label">Palavra-passe</label>
+        <InputText type="password" id="inputPassword" class="form-control" @bind-Value="LoginRequest.Password" />
+
+        <ValidationMessage For="@(() => LoginRequest.Password)" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ErrorMessage
+        </div>
+    }
+
+    <div class="mb-3 form-check">
+        <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+        <input type="checkbox" class="form-check-input" id="rememberMe">
+    </div>
+
+    <button type="submit" class="btn btn-primary px-3" style="margin-left: 200px">Entrar</button>
+</EditForm>
+
+@code {
+    private LoginRequest LoginRequest = new LoginRequest
+        {
+            Identifier = string.Empty,
+            Password = string.Empty
+        };
+
+    private string ErrorMessage = string.Empty;
+
+    private async void Submit()
+    {
+        var response = await AuthenticationService.LoginAsync(LoginRequest);
+        if (!response.Success)
+        {
+            ErrorMessage = response.Message;
+            StateHasChanged();
+            return;
+        }
+
+        var token = response.Data?.Token;
+        if (string.IsNullOrEmpty(token))
+        {
+            ErrorMessage = "Ocorreu um erro ao tentar obter o token de autenticação.";
+            StateHasChanged();
+            return;
+        }
+
+        var userId = response.Data?.UserId;
+        if (userId is null)
+        {
+            ErrorMessage = "Ocorreu um erro ao tentar obter o ID do utilizador.";
+            StateHasChanged();
+            return;
+        }
+
+        await JSRuntime.InvokeVoidAsync("blazorInterop.hideModal", "#loginModal");
+
+        await AuthenticationStateProvider.MarkUserAsAuthenticatedAsync(token, (int)userId);
+    }
+}

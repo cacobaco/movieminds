@@ -1,0 +1,22 @@
+@using Movieminds.Presentation.Responses.Movies;
+
+<head>
+    <link href="css/trend.css" rel="stylesheet" />
+</head>
+
+<div class="flex-column">
+    <a href="/movie/@MovieResponse.Id" class="text-white" style="text-decoration: none;">
+        <div class="d-flex movie-card flex-column pb-3">
+            <img type="image/jpg" class="movie rounded-3 pb-1" src="@MovieResponse.PosterImageUrl" alt="Movie Image" />
+            @* <div class="d-flex flex-column justify-content-center align-items-center">
+                <h6 class="px-2">@MovieResponse.Title</h6>
+                <h6>Rating: @MovieResponse.Rating/10</h6>
+            </div> *@
+        </div>
+    </a>
+</div>
+
+@code {
+    [Parameter]
+    public MovieResponse MovieResponse { get; set; }
+}

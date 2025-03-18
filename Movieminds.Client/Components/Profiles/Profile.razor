@@ -1,0 +1,133 @@
+@using Movieminds.Client.Components.Posts;
+@using Movieminds.Client.Components.Trends;
+@using Movieminds.Presentation.Responses.Profile;
+@using Movieminds.Client.Providers;
+@using Movieminds.Client.Services;
+
+@inject ProfileProvider ProfileProvider;
+@inject ProfileService ProfileService;
+
+@if (ProfileResponse is not null)
+{
+    <div class="d-flex justify-content-between">
+    <div class="d-flex flex-column" style="width: 70vw; height:98vh;">
+        <div class="border-bottom">
+            <img src="@ProfileResponse.BannerImageUrl" alt="Profile Banner"
+                style="max-height: 20vh; min-width: 70vw;" />
+            <div style="position: relative;">
+                <img src="@ProfileResponse.AvatarImageUrl" alt="Profile Picture"
+                    style="width: 100px; position: absolute; top: -50px; left: 5%;" class="rounded-circle" />
+            </div>
+            <div style="padding-top: 60px; padding-left: 40px;">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>@ProfileResponse.Name</h4>
+                        <h5>@@@ProfileResponse.Username</h5>
+                    </div>
+                    <div class="ml-auto">
+                        <button class="btn btn-primary">Seguir Perfil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-around border-bottom">
+            <div
+                style="border-right: 0.5px solid white !important; padding-right: 200px; padding-top: 20px; padding-bottom: 20px;">
+                Posts
+            </div>
+            <div
+                style="border-right: 0.5px solid white !important; padding-right:200px; padding-top: 20px; padding-bottom: 20px;">
+                Lista de desejos
+            </div>
+            <div>
+                Visualizados
+            </div>
+        </div>
+        <div class="d-flex align-items-center flex-column overflow-scroll" style="padding-top: 20px;">
+            <Posts ProfileId="ProfileResponse.Id" />
+        </div>
+    </div>
+    <div class="d-flex flex-column align-items-center">
+        <h2>Em alta 🔥</h2>
+        <div class="flex-column trending-bar overflow-scroll"
+            style="border-left: 0.5px solid white !important; height: 93vh; padding-left: 20px;">
+            <TrendingMovies />
+        </div>
+    </div>
+</div>
+}
+else if (ErrorMessage is not null)
+{
+    <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>@ErrorMessage</h1>
+        </div>
+    </div>
+</div>
+}
+else
+{
+    <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <Loading />
+        </div>
+    </div>
+</div>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private ProfileResponse? _profileResponse;
+    private ProfileResponse? ProfileResponse
+    {
+        get => _profileResponse;
+        set
+        {
+            _profileResponse = value;
+            StateHasChanged();
+        }
+    }
+
+    private string? _errorMessage;
+    private string? ErrorMessage
+    {
+        get => _errorMessage;
+        set
+        {
+            _errorMessage = value;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is null)
+        {
+            ProfileProvider.Notify += OnProfileUpdate;
+            if (ProfileProvider.Profile is null)
+            {
+                return;
+            }
+            ProfileResponse = ProfileProvider.Profile;
+        }
+        else
+        {
+            var profile = await ProfileService.GetProfileAsync(Id.Value);
+            if (!profile.Success)
+            {
+                ErrorMessage = profile.Message;
+                return;
+            }
+            ProfileResponse = profile.Data;
+        }
+    }
+
+    private void OnProfileUpdate(object sender, EventArgs e)
+    {
+        ProfileResponse = ProfileProvider.Profile;
+    }
+}

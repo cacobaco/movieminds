@@ -1,0 +1,11 @@
+<div class="d-flex align-items-center pb-3">
+    <InputText @bind-Value="SearchValue" @oninput="@(e => OnChange.InvokeAsync(e.Value.ToString()))"
+        class="form-control rounded-pill" style="width: 30vh" placeholder="Faça a sua pesquisa" aria-label="Search" />
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnChange { get; set; } = EventCallback<string>.Empty;
+
+    private string SearchValue { get; set; }
+}

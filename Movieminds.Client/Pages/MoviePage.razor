@@ -1,0 +1,14 @@
+@using Movieminds.Client.Components;
+@using Movieminds.Client.Components.Movies;
+
+@page "/movie/{Id:int}"
+
+<body class="d-flex flex-column align-items-center">
+    <Searchbar />
+    <Movie Id="@Id" />
+</body>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}

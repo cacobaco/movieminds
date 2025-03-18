@@ -1,0 +1,136 @@
+﻿@using Movieminds.Client.Components.Authentication;
+@using Movieminds.Client.Providers;
+@using Movieminds.Presentation.Responses.Profile;
+
+@inject ProfileProvider ProfileProvider;
+
+<div class="top-row ps-3 navbar navbar-dark bg-dark border-bottom d-flex"
+    style="border-right: 0.5px solid white !important;">
+    <div class="container-sm">
+        <a class="navbar-brand" href="">
+            <img type="image/png" class="icon mx-2" src="popcorn.png" alt="Popcorn Image" />
+            Movieminds
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable border-right bg-dark" style="border-right: 0.5px solid white !important;"
+    @onclick="ToggleNavMenu">
+    <nav class="flex-column vh-80">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link px-3" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Página inicial
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link px-3" href="movies">
+                <svg viewBox="0 -2 32 32" version="1.1" class="bi" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+                    fill="#000000">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <title>movie-recorder</title>
+                        <desc>Created with Sketch Beta.</desc>
+                        <defs> </defs>
+                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"
+                            sketch:type="MSPage">
+                            <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-204.000000, -517.000000)"
+                                fill="#FFFFFF">
+                                <path
+                                    d="M234,543 L228,538 L228,535 L234,531 L234,543 L234,543 Z M223,529.012 C220.232,529.012 217.989,526.768 217.989,524 C217.989,521.232 220.232,518.989 223,518.989 C225.768,518.989 228.011,521.232 228.011,524 C228.011,526.768 225.768,529.012 223,529.012 L223,529.012 Z M226,541 C226,542.104 225.104,543 224,543 L208,543 C206.896,543 206,542.104 206,541 L206,533 C206,531.896 206.896,531 208,531 L224,531 C225.104,531 226,531.896 226,533 L226,541 L226,541 Z M206,525 C206,522.791 207.791,521 210,521 C212.209,521 214,522.791 214,525 C214,527.209 212.209,529 210,529 C207.791,529 206,527.209 206,525 L206,525 Z M234,529 L228,533 C228,531.786 227.448,530.712 226.594,529.979 C228.626,528.753 230,526.546 230,524 C230,520.134 226.866,517 223,517 C219.134,517 216,520.134 216,524 C216,525.962 216.812,527.729 218.111,529 L214.443,529 C215.4,527.937 216,526.544 216,525 C216,521.687 213.313,519 210,519 C206.687,519 204,521.687 204,525 C204,526.809 204.816,528.41 206.082,529.511 C204.847,530.191 204,531.49 204,533 L204,541 C204,543.209 205.791,545 208,545 L224,545 C226.209,545 228,543.209 228,541 L228,540 L234,545 C235.104,545 236,544.104 236,543 L236,531 C236,529.896 235.104,529 234,529 L234,529 Z"
+                                    id="movie-recorder" sketch:type="MSShapeGroup"> </path>
+                            </g>
+                        </g>
+                    </g>
+                </svg> Filmes
+            </NavLink>
+        </div>
+
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3 mb-1">
+                    <NavLink class="nav-link px-3" href="messages">
+                        <svg viewBox="0 0 24 24" fill="none" class="bi" xmlns="http://www.w3.org/2000/svg"
+                            stroke="#000000">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path
+                                    d="M17.98 10.79V14.79C17.98 15.05 17.97 15.3 17.94 15.54C17.71 18.24 16.12 19.58 13.19 19.58H12.79C12.54 19.58 12.3 19.7 12.15 19.9L10.95 21.5C10.42 22.21 9.56 22.21 9.03 21.5L7.82999 19.9C7.69999 19.73 7.41 19.58 7.19 19.58H6.79001C3.60001 19.58 2 18.79 2 14.79V10.79C2 7.86001 3.35001 6.27001 6.04001 6.04001C6.28001 6.01001 6.53001 6 6.79001 6H13.19C16.38 6 17.98 7.60001 17.98 10.79Z"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                                <path
+                                    d="M21.98 6.79001V10.79C21.98 13.73 20.63 15.31 17.94 15.54C17.97 15.3 17.98 15.05 17.98 14.79V10.79C17.98 7.60001 16.38 6 13.19 6H6.79004C6.53004 6 6.28004 6.01001 6.04004 6.04001C6.27004 3.35001 7.86004 2 10.79 2H17.19C20.38 2 21.98 3.60001 21.98 6.79001Z"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                                <path d="M13.4955 13.25H13.5045" stroke="#ffffff" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M9.9955 13.25H10.0045" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                                <path d="M6.4955 13.25H6.5045" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                            </g>
+                        </svg> Mensagens
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3 d-flex align-items-center" style="margin-top:65vh;">
+                    <NavLink class="nav-link px-1" style="width:8vw !important;" href="profile">
+                        <img class="my-3" style="max-width:30px; border-radius:50px; margin-left:5px; margin-right:10px"
+                            src="@(ProfileProvider?.Profile?.AvatarImageUrl ?? "/img/default-avatar.png")"
+                            alt="Profile Image" />
+                        <txt style="margin-right: 10px;">Perfil</txt>
+                    </NavLink>
+
+                    <NavLink style="padding-left: 10px;"><svg viewBox="0 0 24 24" data-toggle="modal"
+                            data-target="#logoutModal" fill="none" class="bi" xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path d="M15 12L2 12M2 12L5.5 9M2 12L5.5 15" stroke="#ffffff" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path
+                                    d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.3531 21.8897 19.1752 21.9862 17 21.9983M9.00195 17C9.01406 19.175 9.11051 20.3529 9.87889 21.1213C10.5202 21.7626 11.4467 21.9359 13 21.9827"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path>
+                            </g>
+                        </svg>
+                    </NavLink>
+
+                    <Logout />
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3 d-flex align-items-center" style="margin-top:67vh;">
+                    <button class="d-flex justify-content-center align-items-center rounded-2 btn btn-primary"
+                        data-toggle="modal" data-target="#loginModal"
+                        style="min-width:165px; margin-top:30px">Entrar</button>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProfileProvider.Notify += OnProfileUpdated;
+    }
+
+    private void OnProfileUpdated(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
