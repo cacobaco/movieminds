@@ -84,7 +84,7 @@
                         <img class="my-3" style="max-width:30px; border-radius:50px; margin-left:5px; margin-right:10px"
                             src="@(ProfileProvider?.Profile?.AvatarImageUrl ?? "/img/default-avatar.png")"
                             alt="Profile Image" />
-                        <txt style="margin-right: 10px;">Perfil</txt>
+                        <txt style="margin-right: 10px;">@@@(ProfileProvider?.Profile?.Username ?? "Perfil")</txt>
                     </NavLink>
 
                     <NavLink style="padding-left: 10px;"><svg viewBox="0 0 24 24" data-toggle="modal"

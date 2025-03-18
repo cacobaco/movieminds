@@ -1,6 +1,6 @@
 ﻿namespace Movieminds.Application.Commands.SeenLists;
 
 public sealed record ToggleMovieSeenListCommand(
-	int UserId,
+	int ProfileId,
 	int MovieId
 ) : ICommand;

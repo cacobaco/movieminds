@@ -1,0 +1,72 @@
+@using Movieminds.Client.Components;
+@using Movieminds.Client.Components.Movies;
+@using Movieminds.Presentation.Responses.MovieLists;
+@using Movieminds.Presentation.Responses.Movies;
+@using Movieminds.Client.Services;
+
+@inject MovieListService MovieListService;
+
+@if (MovieListResponse is not null)
+{
+    @if (MovieListResponse.Movies.Count() < 1)
+    {
+        <h3 class="text-center">Nenhum filme na lista</h3>
+    }
+    else
+    {
+        <div class="pt-5 row overflow-y-scroll overflow-x-hidden" style="min-width: 100%;">
+            @foreach (var MovieResponse in MovieListResponse.Movies)
+            {
+                <div class="col-3">
+                    <MovieCard MovieResponse="@MovieResponse" />
+                </div>
+            }
+        </div>
+    }
+}
+else if (ErrorMessage is not null)
+{
+    <h3 class="text-center">@ErrorMessage</h3>
+}
+else
+{
+    <Loading />
+}
+
+@code {
+    [Parameter]
+    public string Type { get; set; }
+
+    [Parameter]
+    public int ProfileId { get; set; }
+
+    private MovieListResponse? MovieListResponse;
+
+    private string? _errorMessage;
+    private string? ErrorMessage
+    {
+        get => _errorMessage;
+        set
+        {
+            _errorMessage = value;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMovieList();
+    }
+
+    private async Task LoadMovieList()
+    {
+        var response = await MovieListService.GetProfileMovieListAsync(Type, ProfileId);
+        if (!response.Success || response.Data is null)
+        {
+            ErrorMessage = response.Message;
+            return;
+        }
+
+        MovieListResponse = response.Data;
+    }
+}

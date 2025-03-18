@@ -36,7 +36,9 @@ public class Program
 		services.AddScoped<MovieService>();
 
 		services.AddScoped<PostService>();
-		
+
+		services.AddScoped<MovieListService>();
+
 		await builder.Build().RunAsync();
 	}
 }

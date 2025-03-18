@@ -1,16 +1,12 @@
 @using Movieminds.Presentation.Responses.Movies;
 
-<head>
-    <link href="css/trend.css" rel="stylesheet" />
-</head>
-
-<div class="flex-column">
+<div class="flex-column justify-content-center align-items-center">
     <a href="/movie/@MovieResponse.Id" class="text-white" style="text-decoration: none;">
-        <div class="d-flex movie-card flex-column pb-3">
-            <img type="image/jpg" class="movie rounded-3 pb-1" src="@MovieResponse.PosterImageUrl" alt="Movie Image" />
+        <div class="d-flex movie-card flex-column p-3 justify-content-center align-items-center">
+            <img type="image/jpg" class="movie rounded-3" src="@MovieResponse.PosterImageUrl" alt="Movie Image" />
             @* <div class="d-flex flex-column justify-content-center align-items-center">
-                <h6 class="px-2">@MovieResponse.Title</h6>
-                <h6>Rating: @MovieResponse.Rating/10</h6>
+            <h6 class="px-2">@MovieResponse.Title</h6>
+            <h6>Rating: @MovieResponse.Rating/10</h6>
             </div> *@
         </div>
     </a>

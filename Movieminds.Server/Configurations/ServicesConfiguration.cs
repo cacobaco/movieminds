@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Movieminds.Application.Commands.Authentication;
 using Movieminds.Application.Commands.Posts;
+using Movieminds.Application.Commands.SeenLists;
+using Movieminds.Application.Commands.WishLists;
 using Movieminds.Application.Queries.Movies;
 using Movieminds.Application.Queries.Posts;
 using Movieminds.Application.Queries.Profiles;
+using Movieminds.Application.Queries.SeenLists;
+using Movieminds.Application.Queries.WishLists;
 using Movieminds.Application.Requests;
 using Movieminds.Domain.Entities;
 using Movieminds.Domain.Repositories;
@@ -48,6 +52,9 @@ public static class ServicesConfiguration
         services.AddScoped<IRequestHandler<RegisterCommand, IResponse<RegisterResponse>>, RegisterCommandHandler>();
 
         services.AddScoped<IRequestHandler<CreatePostCommand>, CreatePostCommandHandler>();
+
+        services.AddScoped<IRequestHandler<ToggleMovieWishListCommand>, ToggleMovieWishListCommandHandler>();
+        services.AddScoped<IRequestHandler<ToggleMovieSeenListCommand>, ToggleMovieSeenListCommandHandler>();
     }
 
     public static void AddQueries(this IServiceCollection services)
@@ -79,5 +86,8 @@ public static class ServicesConfiguration
         });
 
         services.AddScoped<IRequestHandler<GetPostsQuery, ICollectionResponse<GetPostResponse>>, GetPostsQueryHandler>();
+
+        services.AddScoped<IRequestHandler<GetProfileWishListQuery, IResponse<GetWishListResponse>>, GetProfileWishListQueryHandler>();
+        services.AddScoped<IRequestHandler<GetProfileSeenListQuery, IResponse<GetSeenListResponse>>, GetProfileSeenListQueryHandler>();
     }
 }

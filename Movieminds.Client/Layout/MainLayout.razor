@@ -7,12 +7,10 @@
         <div class="sidebar">
             <NavMenu />
         </div>
-        <main>
-            <article class="content px-4">
-                @Body
-                <LoginModal />
-                <RegisterModal />
-            </article>
+        <main class="main-content">
+            @Body
+            <LoginModal />
+            <RegisterModal />
         </main>
     </div>
 </CascadingAuthenticationState>

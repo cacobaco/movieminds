@@ -12,83 +12,76 @@
 
 <PageTitle>Filmes</PageTitle>
 
-<head>
-    <link href="css/movies.css" rel="stylesheet" />
-</head>
-
-<body class="d-flex justify-content-between">
-    <div class="main d-flex flex-column align-items-center" style="min-width: 100%;">
-        <div class="d-flex align-items-center justify-content-center" style="min-width: 100%;">
-            <Searchbar OnChange="OnSearch" />
-        </div>
-
-        <div class="mb-3">
-            <label for="inputSortBy" class="form-label">Ordenação</label>
-            <InputSelect id="inputSortBy" class="form-select" @bind-Value="SortBy"
-                disabled="@(!string.IsNullOrEmpty(SearchValue))">
-                <option value="popularity.desc" selected>Popularidade - Descrescente</option>
-                <option value="popularity.asc">Popularidade - Crescente</option>
-                <option value="original_title.desc">Título - Decrescente</option>
-                <option value="original_title.asc">Título - Crescente</option>
-                <option value="primary_release_date.desc">Data de lançamento - Decrescente</option>
-                <option value="primary_release_date.asc">Data de lançamento - Crescente</option>
-            </InputSelect>
-        </div>
-
-
-        <div class="mb-3">
-            @if (MovieResponses is not null && LastMovieResponses is not null)
-            {
-                <small>Mostrando @MovieResponses.Count() de @LastMovieResponses.TotalRecords
-                    resultados</small>
-            }
-            else if (MovieResponses is not null)
-            {
-                <small>Mostrando @MovieResponses.Count() resultados</small>
-            }
-            else
-            {
-                <small>Sem resultados</small>
-            }
-        </div>
-
-        <div class="pt-5 row overflow-y-scroll overflow-x-hidden" style="height:90vh;" id="movieScrollDiv">
-            @if (MovieResponses is not null)
-            {
-                @if (MovieResponses.Count() < 1)
-                {
-                    <h1>Sem resultados</h1>
-                }
-                else
-                {
-                    @foreach (var MovieResponse in MovieResponses)
-                    {
-                        <div class="col-3">
-                            <MovieCard MovieResponse="@MovieResponse" />
-                        </div>
-                    }
-                }
-            }
-            else if (ErrorMessage is not null)
-            {
-                <h1>@ErrorMessage</h1>
-            }
-            else
-            {
-                <div class="d-flex justify-content-center">
-                    <Loading />
-                </div>
-            }
-
-            @if (IsLoading)
-            {
-                <div class="d-flex justify-content-center">
-                    <Loading />
-                </div>
-            }
-        </div>
+<div class="p-4 pb-0 d-flex flex-column align-items-center" style="min-width: 100%; height: 100vh;">
+    <div class="d-flex align-items-center justify-content-center" style="min-width: 100%;">
+        <Searchbar OnChange="OnSearch" />
     </div>
-</body>
+
+    <div class="mb-3">
+        <label for="inputSortBy" class="form-label">Ordenação</label>
+        <InputSelect id="inputSortBy" class="form-select" @bind-Value="SortBy"
+            disabled="@(!string.IsNullOrEmpty(SearchValue))">
+            <option value="popularity.desc" selected>Popularidade - Descrescente</option>
+            <option value="popularity.asc">Popularidade - Crescente</option>
+            <option value="original_title.desc">Título - Decrescente</option>
+            <option value="original_title.asc">Título - Crescente</option>
+            <option value="primary_release_date.desc">Data de lançamento - Decrescente</option>
+            <option value="primary_release_date.asc">Data de lançamento - Crescente</option>
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        @if (MovieResponses is not null && LastMovieResponses is not null)
+        {
+            <small>Mostrando @MovieResponses.Count() de @LastMovieResponses.TotalRecords
+                resultados</small>
+        }
+        else if (MovieResponses is not null)
+        {
+            <small>Mostrando @MovieResponses.Count() resultados</small>
+        }
+        else
+        {
+            <small>Sem resultados</small>
+        }
+    </div>
+
+    <div class="pt-5 row overflow-y-scroll overflow-x-hidden" id="movieScrollDiv">
+        @if (MovieResponses is not null)
+        {
+            @if (MovieResponses.Count() < 1)
+            {
+                <h1>Sem resultados</h1>
+            }
+            else
+            {
+                @foreach (var MovieResponse in MovieResponses)
+                {
+                    <div class="col-3">
+                        <MovieCard MovieResponse="@MovieResponse" />
+                    </div>
+                }
+            }
+        }
+        else if (ErrorMessage is not null)
+        {
+            <h1>@ErrorMessage</h1>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center">
+                <Loading />
+            </div>
+        }
+
+        @if (MovieResponses is not null && IsLoading)
+        {
+            <div class="d-flex justify-content-center">
+                <Loading />
+            </div>
+        }
+    </div>
+</div>
 
 @code {
     private bool _isLoading = false;

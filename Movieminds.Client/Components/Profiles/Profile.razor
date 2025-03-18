@@ -1,5 +1,6 @@
 @using Movieminds.Client.Components.Posts;
 @using Movieminds.Client.Components.Trends;
+@using Movieminds.Client.Components.MovieLists;
 @using Movieminds.Presentation.Responses.Profile;
 @using Movieminds.Client.Providers;
 @using Movieminds.Client.Services;
@@ -10,76 +11,99 @@
 @if (ProfileResponse is not null)
 {
     <div class="d-flex justify-content-between">
-    <div class="d-flex flex-column" style="width: 70vw; height:98vh;">
-        <div class="border-bottom">
-            <img src="@ProfileResponse.BannerImageUrl" alt="Profile Banner"
-                style="max-height: 20vh; min-width: 70vw;" />
-            <div style="position: relative;">
-                <img src="@ProfileResponse.AvatarImageUrl" alt="Profile Picture"
-                    style="width: 100px; position: absolute; top: -50px; left: 5%;" class="rounded-circle" />
-            </div>
-            <div style="padding-top: 60px; padding-left: 40px;">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4>@ProfileResponse.Name</h4>
-                        <h5>@@@ProfileResponse.Username</h5>
-                    </div>
-                    <div class="ml-auto">
-                        <button class="btn btn-primary">Seguir Perfil</button>
+        <div class="d-flex flex-column justify-content-start" style="width: 100%; height:100vh;">
+            <div class="d-flex flex-column border-bottom" style="max-height: 40%;">
+                <div style="max-height: 60%; background-color: #212529;">
+                    <img src="@ProfileResponse.BannerImageUrl" alt="Profile Banner"
+                    style="min-width: 100%; min-height: 100%; max-height: 100%;" />
+                </div>
+                <div style="position: relative;">
+                    <img src="@ProfileResponse.AvatarImageUrl" alt="Profile Picture"
+                        style="width: 100px; position: absolute; top: -50px; left: 5%;" class="rounded-circle" />
+                </div>
+                <div style="padding-top: 60px; padding-left: 40px;">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>@ProfileResponse.Name</h4>
+                            <h5>@@@ProfileResponse.Username</h5>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="d-flex align-items-center justify-content-around border-bottom" style="width: 100%">
+                <button @onclick="() => SetSelectedTab(ProfileTab.Posts)"
+                    style="width: 100%; padding-top: 20px; padding-bottom: 20px; border-left: 0.5px solid white !important; border-right: 0.5px solid white !important; background-color: #212529;">
+                    <div class="text-white">
+                        Posts
+                    </div>
+                </button>
+                <button @onclick="() => SetSelectedTab(ProfileTab.WishList)"
+                    style="width: 100%; padding-top: 20px; padding-bottom: 20px; border-right: 0.5px solid white !important; background-color: #212529;">
+                    <div class="text-white">
+                        Lista de desejos
+                    </div>
+                </button>
+                <button @onclick="() => SetSelectedTab(ProfileTab.SeenList)"
+                    style="width: 100%; padding-top: 20px; padding-bottom: 20px; border-right: 0.5px solid white !important; background-color: #212529;">
+                    <div class="text-white">
+                        Visualizados
+                    </div>
+                </button>
+            </div>
+            @if (SelectedTab == ProfileTab.Posts)
+            {
+                <div class="d-flex align-items-center flex-column overflow-scroll" style="padding-top: 20px;">
+                    <Posts ProfileId="ProfileResponse.Id" />
+                </div>
+            }
+            else if (SelectedTab == ProfileTab.WishList)
+            {
+                <div class="d-flex align-items-center flex-column overflow-scroll" style="padding-top: 20px; max-width: 100%;">
+                    <MovieList Type="wishlist" ProfileId="ProfileResponse.Id" />
+                </div>
+            }
+            else if (SelectedTab == ProfileTab.SeenList)
+            {
+                <div class="d-flex align-items-center flex-column overflow-scroll" style="padding-top: 20px; max-width: 100%;">
+                    <MovieList Type="seenlist" ProfileId="ProfileResponse.Id" />
+                </div>
+            }
         </div>
-        <div class="d-flex align-items-center justify-content-around border-bottom">
-            <div
-                style="border-right: 0.5px solid white !important; padding-right: 200px; padding-top: 20px; padding-bottom: 20px;">
-                Posts
+        <div class="d-flex flex-column align-items-center"
+            style="border-left: 0.5px solid white !important; height: 100vh;">
+            <h2>Em alta 🔥</h2>
+            <div class="flex-column trending-bar overflow-y-scroll">
+                <TrendingMovies />
             </div>
-            <div
-                style="border-right: 0.5px solid white !important; padding-right:200px; padding-top: 20px; padding-bottom: 20px;">
-                Lista de desejos
-            </div>
-            <div>
-                Visualizados
-            </div>
-        </div>
-        <div class="d-flex align-items-center flex-column overflow-scroll" style="padding-top: 20px;">
-            <Posts ProfileId="ProfileResponse.Id" />
         </div>
     </div>
-    <div class="d-flex flex-column align-items-center">
-        <h2>Em alta 🔥</h2>
-        <div class="flex-column trending-bar overflow-scroll"
-            style="border-left: 0.5px solid white !important; height: 93vh; padding-left: 20px;">
-            <TrendingMovies />
-        </div>
-    </div>
-</div>
 }
 else if (ErrorMessage is not null)
 {
     <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>@ErrorMessage</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>@ErrorMessage</h1>
+            </div>
         </div>
     </div>
-</div>
 }
 else
 {
     <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <Loading />
+        <div class="row">
+            <div class="col-md-12">
+                <Loading />
+            </div>
         </div>
     </div>
-</div>
 }
 
 @code {
     [Parameter]
     public int? Id { get; set; }
+
+    private ProfileTab SelectedTab = ProfileTab.Posts;
 
     private ProfileResponse? _profileResponse;
     private ProfileResponse? ProfileResponse
@@ -129,5 +153,17 @@ else
     private void OnProfileUpdate(object sender, EventArgs e)
     {
         ProfileResponse = ProfileProvider.Profile;
+    }
+
+    private void SetSelectedTab(ProfileTab tab)
+    {
+        SelectedTab = tab;
+    }
+
+    private enum ProfileTab
+    {
+        Posts,
+        WishList,
+        SeenList
     }
 }

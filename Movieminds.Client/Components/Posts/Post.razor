@@ -3,20 +3,23 @@
 
 <div class="d-flex flex-column border-sm rounded-3 mb-3"
     style="min-width: 600px; max-width: 600px; max-height:1000px; background-color: #101010; ">
-    <div class="d-flex align-items-center justify-content-center post-header border-bottom border-sm">
+    <div class="d-flex align-items-center justify-content-start post-header border-bottom border-sm">
         <img type="image/jpg" class="mx-3 my-3" style="max-width:40px; border-radius:50px" src="img/default-avatar.png"
             alt="Profile Image" />
-        <h5><b><a href="@($"profile/{PostResponse.Author.Id}")">@@@PostResponse.Author.Username</a></b> postou sobre
-            <b>@PostResponse.Movie.Title</b></h5>
+        <h5><b><a class="text-white"
+                    href="@($"profile/{PostResponse.Author.Id}")">@@@PostResponse.Author.Username</a></b> postou sobre
+            <b>@PostResponse.Movie.Title</b>
+        </h5>
     </div>
     <div class="d-flex flex-column border-bottom border-sm">
         <h6 class="px-3 my-3">@PostResponse.Content</h6>
     </div>
-    <AuthorizeView>
-        <Authorized>
-            <div class="d-flex justify-content-between align-items-center p-2">
-                <p class="m-0">@PostResponse.CreatedAt</p>
 
+    <div class="d-flex justify-content-between align-items-center p-2">
+        <p>@PostResponse.CreatedAt</p>
+
+        <AuthorizeView>
+            <Authorized>
                 <div class="d-flex align-items-center px-3">
                     <svg viewBox="0 0 24 24" style="min-width:30px;" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -29,9 +32,9 @@
                     </svg>
                     <h6 class="px-1 pt-1">@PostResponse.LikesCount</h6>
                 </div>
-            </div>
-        </Authorized>
-    </AuthorizeView>
+            </Authorized>
+        </AuthorizeView>
+    </div>
 </div>
 
 @code {

@@ -1,12 +1,24 @@
 @using Movieminds.Client.Components;
 @using Movieminds.Client.Components.Movies;
+@using Movieminds.Client.Components.Trends;
 
 @page "/movie/{Id:int}"
 
-<body class="d-flex flex-column align-items-center">
-    <Searchbar />
-    <Movie Id="@Id" />
-</body>
+<div class="d-flex flex-column align-items-between" style="min-width: 100%; height: 100vh;">
+    <div class="d-flex justify-content-between align-items-start" style="max-height: 100%;">
+        <div class="d-flex flex-column align-items-center pt-3 flex-grow-1" style="max-height: 100%;">
+            <Searchbar />
+            <Movie Id="@Id" />
+        </div>
+
+        <div class="d-flex flex-column align-items-center" style="border-left: 0.5px solid white !important; height: 100vh;">
+            <h2>Em alta 🔥</h2>
+            <div class="flex-column trending-bar overflow-y-scroll">
+                <TrendingMovies />
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter]

@@ -23,7 +23,7 @@ public class ToggleMovieWishListCommandHandler : ICommandHandler<ToggleMovieWish
 	{
 		try
 		{
-			var profile = await _profileRepository.GetByIdAsync(request.UserId);
+			var profile = await _profileRepository.GetByIdAsync(request.ProfileId);
 			if (profile == null)
 			{
 				return Response.Fail("Profile not found");
@@ -35,16 +35,21 @@ public class ToggleMovieWishListCommandHandler : ICommandHandler<ToggleMovieWish
 				return Response.Fail("Movie not found");
 			}
 
-			var wishList = profile.WishList;
+			_profileRepository.Ensure(profile, p => p.WishList);
 
+			var wishList = profile.WishList;
 			if (wishList == null)
 			{
 				return Response.Fail("WishList not found");
 			}
 
+			_wishListRepository.Ensure(profile.WishList, s => (IEnumerable<Movie>)s.Movies);
+
+			var removed = false;
 			if (wishList.Movies.Contains(movie))
 			{
 				wishList.Movies.Remove(movie);
+				removed = true;
 			}
 			else
 			{
@@ -53,7 +58,7 @@ public class ToggleMovieWishListCommandHandler : ICommandHandler<ToggleMovieWish
 
 			_wishListRepository.Update(wishList);
 			await _unitOfWork.SaveChangesAsync();
-			return Response.Ok();
+			return Response.Ok("Movie " + (removed ? "removed" : "added") + " to wish list");
 		}
 		catch (Exception)
 		{

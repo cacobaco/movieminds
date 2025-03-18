@@ -23,7 +23,7 @@ public class ToggleMovieSeenListCommandHandler : ICommandHandler<ToggleMovieSeen
 	{
 		try
 		{
-			var profile = await _profileRepository.GetByIdAsync(request.UserId);
+			var profile = await _profileRepository.GetByIdAsync(request.ProfileId);
 			if (profile == null)
 			{
 				return Response.Fail("Profile not found");
@@ -35,16 +35,21 @@ public class ToggleMovieSeenListCommandHandler : ICommandHandler<ToggleMovieSeen
 				return Response.Fail("Movie not found");
 			}
 
-			var seenList = profile.SeenList;
+			_profileRepository.Ensure(profile, p => p.SeenList);
 
+			var seenList = profile.SeenList;
 			if (seenList == null)
 			{
 				return Response.Fail("SeenList not found");
 			}
 
+			_seenListRepository.Ensure(profile.SeenList, s => (IEnumerable<Movie>)s.Movies);
+
+			var removed = false;
 			if (seenList.Movies.Contains(movie))
 			{
 				seenList.Movies.Remove(movie);
+				removed = true;
 			}
 			else
 			{
@@ -53,7 +58,7 @@ public class ToggleMovieSeenListCommandHandler : ICommandHandler<ToggleMovieSeen
 
 			_seenListRepository.Update(seenList);
 			await _unitOfWork.SaveChangesAsync();
-			return Response.Ok();
+			return Response.Ok("Movie " + (removed ? "removed" : "added") + " to seen list");
 		}
 		catch (Exception)
 		{

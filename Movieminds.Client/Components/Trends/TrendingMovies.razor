@@ -3,32 +3,30 @@
 
 @inject MovieService MovieService;
 
-
-
-@if (MovieResponses is not null)
-{
-    @if (MovieResponses.Count() < 1)
+<div class="d-flex flex-column justify-content-center overflow-x-hidden" style="width: 250px;">
+    @if (MovieResponses is not null)
     {
-        <h3 class="text-center">Nenhuma tendência encontrada</h3>
-    }
-    else
-    {
-        <div class="d-flex flex-column justify-content-center">
+        @if (MovieResponses.Count() < 1)
+        {
+            <h3 class="text-center">Nenhuma tendência encontrada</h3>
+        }
+        else
+        {
             @foreach (var movieResponse in MovieResponses)
             {
                 <TrendingMovie MovieResponse="@movieResponse" />
             }
-        </div>
+        }
     }
-}
-else if (ErrorMessage is not null)
-{
-    <h3 class="text-center">@ErrorMessage</h3>
-}
-else
-{
-    <Loading />
-}
+    else if (ErrorMessage is not null)
+    {
+        <h3 class="text-center">@ErrorMessage</h3>
+    }
+    else
+    {
+        <Loading />
+    }
+</div>
 
 @code {
     private IEnumerable<MovieResponse>? MovieResponses;
